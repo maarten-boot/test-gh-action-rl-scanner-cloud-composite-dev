@@ -124,6 +124,24 @@ runs:
         rl-proxy-password: ${{ inputs.rl-proxy-password }}
 
     # -------------------------------------
+    # Upload the secure.software report to GitHub
+    # Note: It is currently not possible to get the URL for the uploaded asset
+    - name: Upload the rl-scanner report
+      if: success() || failure()
+      uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+      with:
+        name: "report-${{ inputs.ref-sha }}"
+        path: "${{ inputs.report-path }}"
+
+    # -------------------------------------
+    # Upload the secure.software SARIF report to GitHub
+    - name: Upload the SARIF report
+      if: success() || failure()
+      uses: github/codeql-action/upload-sarif@8e0b1c74b1d5a0077b04d064c76ee714d3da7637 # v2.14.6
+      with:
+        sarif_file: "${{ inputs.report-path }}/report.sarif.json"
+        category: rl-secure-scanner
+    # -------------------------------------
     # Update the status from pending to failure/success and set the descriptive text
     - name: Set the analysis status
       if: success() || failure()
