@@ -19,6 +19,11 @@ inputs:
     description: 'Path to the package file (artifact) you want to scan'
     required: true
     # type: string
+  report-path:
+    description: 'Path to a directory where the reports will be saved (must be a new directory, with a path relative to the github.workspace)'
+    required: false
+    default: MyReportDir
+    # type: string
 
   rl-portal-server:
     description: 'the server namespace used for your company'
@@ -100,13 +105,15 @@ runs:
     # Run the reversinglabs/rl-scanner-cloud
     - name: ReversingLabs apply rl-scanner-cloud to the build artifact
       id: rl-scan
-      uses: reversinglabs/gh-action-rl-scanner-cloud-only@v1
+      # uses: reversinglabs/gh-action-rl-scanner-cloud-only@v1
+      uses: maarten-boot/test-gh-action-rl-scanner-cloud-only-dev@v1.0.5
       with: # we expect RLPORTAL_ACCESS_TOKEN to be set in the environment
         rl-verbose: ${{ inputs.rl-verbose }}
         rl-portal-server: ${{ inputs.rl-portal-server }}
         rl-portal-org: ${{ inputs.rl-portal-org }}
         rl-portal-group: ${{ inputs.rl-portal-group }}
         artifact-to-scan: ${{ inputs.artifact-to-scan }}
+        report-path: ${{ inputs.report-path }}
         rl-package-url: ${{ inputs.rl-package-url }}
         rl-diff-with: ${{ inputs.rl-diff-with }}
         rl-submit-only: ${{ inputs.rl-submit-only }}
