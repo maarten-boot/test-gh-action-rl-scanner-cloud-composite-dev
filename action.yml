@@ -81,6 +81,10 @@ inputs:
     required: false
     default: ""
     # type: string
+  ref-sha:
+    description: 'Reference SHA of the commit or pull request'
+    required: false
+    default: ${{ github.event.pull_request.head.sha || github.sha }}
 
 outputs:
   description:
@@ -97,7 +101,7 @@ runs:
     # -------------------------------------------
     # Set the analysis status to pending
     - name: Set the pending status
-      uses: ouzi-dev/commit-status-updater@219d3f932547cad092e384c7a36bf4d963739c35 # v2.0.1
+      uses: ouzi-dev/commit-status-updater@v2.0.1
       with:
         addHoldComment: "true"
 
@@ -137,7 +141,7 @@ runs:
     # Upload the secure.software SARIF report to GitHub
     - name: Upload the SARIF report
       if: success() || failure()
-      uses: github/codeql-action/upload-sarif@8e0b1c74b1d5a0077b04d064c76ee714d3da7637 # v2.14.6
+      uses: github/codeql-action/upload-sarif@007d2a85e0e57ca0a01303f5f5989cabb605c8fe # v2.15.2
       with:
         sarif_file: "${{ inputs.report-path }}/report.sarif.json"
         category: rl-secure-scanner
@@ -145,7 +149,7 @@ runs:
     # Update the status from pending to failure/success and set the descriptive text
     - name: Set the analysis status
       if: success() || failure()
-      uses: ouzi-dev/commit-status-updater@219d3f932547cad092e384c7a36bf4d963739c35 # v2.0.1
+      uses: ouzi-dev/commit-status-updater@v2.0.1
       with:
         addHoldComment: "true"
         description: ${{ steps.rl-scan.outputs.description }}
